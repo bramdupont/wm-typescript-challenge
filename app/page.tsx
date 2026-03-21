@@ -1,19 +1,17 @@
-export default function Home() {
-	return (
-		<main>
-			<div className="mb-4 space-y-3 rounded border border-gray-200 bg-white/25 p-5 text-sm">
-				<p className="block text-radial">
-					👷🏻‍♂️ Please remove this block and show the{" "}
-					<strong>most popular recipes</strong> here.
-				</p>
-				<p className="block">
-					<span>You can use the api endpoint </span>
-					<code className="text-sm font-light">/api/recipes/popular</code>.
-				</p>
-			</div>
-			<ul>
-				<li></li>
-			</ul>
-		</main>
+import { Cocktail } from "@/app/types/types";
+import PageClient from "./page.client";
+
+const fetchPopularCocktails = async () => {
+	"use server";
+	const cocktails = await fetch("http://localhost:3000/api/cocktails").then(
+		(res) => res.json(),
 	);
+	return cocktails
+		.sort((a: Cocktail, b: Cocktail) => b.views - a.views)
+		.slice(0, 5);
+};
+
+export default async function Home() {
+	const cocktails = await fetchPopularCocktails();
+	return <PageClient cocktails={cocktails} />;
 }
