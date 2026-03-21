@@ -24,7 +24,6 @@ export default function PageClient({
 		isValidating,
 	} = useCocktails(initialCocktails);
 
-	// Show loading only on initial load (no initial data yet)
 	const showLoading = isLoading && !initialCocktails?.length;
 
 	const filteredCocktails = useMemo(
@@ -32,13 +31,11 @@ export default function PageClient({
 		[cocktails, debouncedSearch],
 	);
 
-	// Show suggestions when user is typing
 	const suggestions = useMemo(() => {
 		if (!searchTerm.trim() || !cocktails) return [];
 		return filterCocktailsByName(cocktails, searchTerm).slice(0, 5);
 	}, [searchTerm, cocktails]);
 
-	// Close suggestions when clicking outside
 	useEffect(() => {
 		const handleClickOutside = (e: MouseEvent) => {
 			if (
@@ -131,7 +128,6 @@ export default function PageClient({
 						</button>
 					</form>
 
-					{/* Suggestions Dropdown */}
 					{showSuggestions && suggestions.length > 0 && (
 						<div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded shadow-lg z-50">
 							<ul className="py-1">
