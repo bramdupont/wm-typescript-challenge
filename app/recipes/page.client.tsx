@@ -8,12 +8,16 @@ import { filterCocktailsByName } from "@/app/lib/search-cocktails";
 import Loading from "@/app/recipes/loading";
 import { Cocktail } from "@/app/types/types";
 import { Combobox, ComboboxOption, ComboboxOptions } from "@headlessui/react";
+import { Pagination } from "@/app/components/pagination";
+
+const MAX_ITEMS_PER_PAGE = 12;
 
 export default function PageClient({
 	cocktails: initialCocktails,
 }: {
 	cocktails: Cocktail[];
 }) {
+	const [currentPage, setCurrentPage] = useState(1);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [showSuggestions, setShowSuggestions] = useState(false);
 	const debouncedSearch = useDebounce(searchTerm, 300);
@@ -23,6 +27,14 @@ export default function PageClient({
 		data: cocktails,
 		isLoading,
 	} = useCocktails(initialCocktails);
+
+	const startIndex = (currentPage - 1) * MAX_ITEMS_PER_PAGE;
+	const endIndex = startIndex + MAX_ITEMS_PER_PAGE;
+	const paginatedCocktails = cocktails?.slice(startIndex, endIndex);
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+	};
 
 	const showLoading = isLoading && !initialCocktails?.length;
 
@@ -167,10 +179,18 @@ export default function PageClient({
 			)}
 
 			<div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-x-6 md:gap-y-8">
-				{filteredCocktails.map((cocktail) => (
+				{paginatedCocktails?.map((cocktail) => (
 					<Card key={cocktail.name} cardData={cocktail} />
 				))}
 			</div>
+			<Pagination
+				totalItems={filteredCocktails.length}
+				itemsPerPage={MAX_ITEMS_PER_PAGE}
+				startIndex={startIndex}
+				endIndex={endIndex}
+				page={currentPage}
+				onPageChange={handlePageChange}
+			/>
 		</main>
 	);
 }
