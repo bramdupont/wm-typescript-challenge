@@ -57,9 +57,9 @@ export default function PageClient({
 
 	return (
 		<main>
-			<div className="flex justify-between items-center">
-				<h1 className="font-bold text-2xl">Our cocktails</h1>
-				<div className="relative w-[400px]">
+			<div className="md:flex justify-between items-center">
+				<h1 className="mb-4 md:mb-0 font-bold text-2xl">Our cocktails</h1>
+				<div className="relative md:w-[400px]">
 					<form
 						className="flex items-center gap-2 bg-white border px-2 rounded"
 						onSubmit={(e) => e.preventDefault()}
