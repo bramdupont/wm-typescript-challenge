@@ -1,5 +1,7 @@
-import Link from "next/link";
 import type { Cocktail } from "@/app/types/types";
+import { CocktailDetails } from "@/app/components/cocktail-details";
+import { CloseButton, Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
+
 
 export const Modal = ({
 	card,
@@ -10,86 +12,49 @@ export const Modal = ({
 	open: boolean;
 	setOpen: (open: boolean) => void;
 }) => {
-	const { name, glass, category, ingredients, garnish, preparation } = card;
 
 	return (
-		<div
-			className={`${open ? "flex" : "hidden"} items-center justify-center absolute top-0 left-0 w-full h-full bg-black/80`}
-		>
-			<div className="bg-white p-8 pt-12 rounded-lg text-left space-y-6 shadow-lg w-full max-w-md relative">
-				<Link
-					className="inline-block absolute top-0 right-0 rounded-md bg-indigo-500/20 px-3.5 py-2.5 text-sm font-semibold text-indigo-400 hover:bg-indigo-500/30"
-					href="/"
-					onClick={() => setOpen(false)}
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						strokeWidth={1.5}
-						stroke="currentColor"
-						className="size-6"
-					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							d="M6 18 18 6M6 6l12 12"
-						/>
-					</svg>
-				</Link>
-				<div>
-					{name && <h2 className="text-2xl font-bold">{name}</h2>}
-					{category && (
-						<span className="mr-1 inline-block rounded bg-pink-200 px-2 py-1 text-xs font-semibold uppercase text-pink-600 last:mr-0">
-							{category}
-						</span>
-					)}
-				</div>
-				{glass && (
-					<div>
-						<h3 className="text-lg font-bold">Glass</h3>
-						<p>{glass}</p>
-					</div>
-				)}
+		<Dialog open={open} onClose={setOpen} className="relative z-10">
+			<DialogBackdrop
+				transition
+				className="fixed inset-0 bg-gray-900/50 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+			/>
 
-				{ingredients.length > 0 && (
-					<div className="space-y-2">
-						<h3 className="text-lg font-bold">Ingredients</h3>
-						<div className="list-inside list-disc px-1 text-sm">
-							{ingredients.map((ingredient, index) => (
-								<ul key={index} className="list-inside list-disc px-1 text-sm">
-									{ingredient.ingredient && (
-										<li>
-											{ingredient.amount}
-											{ingredient.unit} {ingredient.ingredient}
-										</li>
-									)}
-									{ingredient.special && <li>{ingredient.special}</li>}
-								</ul>
-							))}
+			<div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+				<div className="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
+					<DialogPanel
+						transition
+						className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl outline -outline-offset-1 outline-white/10 transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-sm sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+					>
+						<CloseButton className="absolute top-0 right-0 rounded-md bg-indigo-500/20 p-2.5 text-indigo-400 hover:bg-indigo-500/30">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								strokeWidth={1.5}
+								stroke="currentColor"
+								className="size-6"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M6 18 18 6M6 6l12 12"
+								/>
+							</svg>
+						</CloseButton>
+						<CocktailDetails cocktail={card} />
+						<div className="mt-5 sm:mt-6">
+							<button
+								type="button"
+								onClick={() => setOpen(false)}
+								className="inline-flex w-full justify-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+							>
+								Done
+							</button>
 						</div>
-					</div>
-				)}
-				{garnish && (
-					<div>
-						<h3 className="text-lg font-bold">Garnish</h3>
-						<p>{garnish}</p>
-					</div>
-				)}
-				{preparation && (
-					<div>
-						<h3 className="text-lg font-bold">Preparation</h3>
-						<div className="text-sm">{preparation}</div>
-					</div>
-				)}
-				<Link
-					className="block rounded-md bg-indigo-500/20 text-center px-3.5 py-2.5 text-sm font-semibold text-indigo-400 hover:bg-indigo-500/30"
-					href="#"
-					onClick={() => setOpen(false)}
-				>
-					Done
-				</Link>
+					</DialogPanel>
+				</div>
 			</div>
-		</div>
+		</Dialog>
 	);
 };

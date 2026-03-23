@@ -7,6 +7,7 @@ import { useDebounce } from "@/app/hooks/use-debounce";
 import { filterCocktailsByName } from "@/app/lib/search-cocktails";
 import Loading from "@/app/recipes/loading";
 import { Cocktail } from "@/app/types/types";
+import { Combobox, ComboboxOption, ComboboxOptions } from "@headlessui/react";
 
 export default function PageClient({
 	cocktails: initialCocktails,
@@ -21,7 +22,6 @@ export default function PageClient({
 	const {
 		data: cocktails,
 		isLoading,
-		isValidating,
 	} = useCocktails(initialCocktails);
 
 	const showLoading = isLoading && !initialCocktails?.length;
@@ -49,12 +49,6 @@ export default function PageClient({
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
-
-	const handleSelectSuggestion = (cocktailName: string) => {
-		setSearchTerm(cocktailName);
-		setShowSuggestions(false);
-		searchInputRef.current?.focus();
-	};
 
 	const handleClearSearch = () => {
 		setSearchTerm("");
@@ -110,6 +104,7 @@ export default function PageClient({
 						<button
 							type="submit"
 							className="my-1 p-2 hover:bg-gray-100 rounded transition-colors"
+							aria-label="Search"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -129,26 +124,36 @@ export default function PageClient({
 					</form>
 
 					{showSuggestions && suggestions.length > 0 && (
-						<div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded shadow-lg z-50">
-							<ul className="py-1">
+						<Combobox
+							as="div"
+							onChange={(cocktail: Cocktail | null) => {
+								if (cocktail) {
+									setSearchTerm(cocktail.name);
+									setShowSuggestions(false);
+									searchInputRef.current?.focus();
+								}
+							}}
+						>
+							<ComboboxOptions
+								static
+								className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base outline -outline-offset-1 outline-white/10 sm:text-sm"
+							>
 								{suggestions.map((cocktail) => (
-									<li key={cocktail.name}>
-										<button
-											type="button"
-											onClick={() => handleSelectSuggestion(cocktail.name)}
-											className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors flex items-center gap-2"
-										>
-											<span className="text-sm font-medium">
-												{cocktail.name}
-											</span>
-											<span className="text-xs text-gray-500">
-												{cocktail.category}
-											</span>
-										</button>
-									</li>
+									<ComboboxOption
+										key={cocktail.name}
+										value={cocktail}
+										className="cursor-default px-3 py-2 text-gray-800 select-none data-focus:bg-indigo-500 data-focus:text-white data-focus:outline-hidden"
+									>
+										<span className="text-sm font-medium">
+											{cocktail.name}
+										</span>
+										<span className="ml-2 text-xs text-gray-500">
+											{cocktail.category}
+										</span>
+									</ComboboxOption>
 								))}
-							</ul>
-						</div>
+							</ComboboxOptions>
+						</Combobox>
 					)}
 				</div>
 			</div>

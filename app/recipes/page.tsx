@@ -1,12 +1,13 @@
 import PageClient from "@/app/recipes/page.client";
 import { Cocktail } from "@/app/types/types";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
 const fetchCocktails = async () => {
-	"use server";
-	const cocktails = await fetch("http://localhost:3000/api/cocktails").then(
+	const cocktails: Cocktail[] = await fetch(`${BASE_URL}/api/cocktails`).then(
 		(res) => res.json(),
 	);
-	return cocktails.sort((a: Cocktail, b: Cocktail) => b.views - a.views);
+	return cocktails.sort((a, b) => b.views - a.views);
 };
 
 export default async function RecipePage() {

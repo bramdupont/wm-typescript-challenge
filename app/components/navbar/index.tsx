@@ -2,16 +2,22 @@
 import Link from "next/link";
 import { Logo } from "../logo";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 const navbarStyles = {
 	default:
-		"block border-b border-gray-100 py-2 text-gray-100 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-gray-500 md:dark:hover:bg-transparent md:dark:hover:text-white",
+		"block border-b border-gray-100 p-2 text-gray-100 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-gray-500 md:dark:hover:bg-transparent md:dark:hover:text-white",
 	active:
-		"block rounded bg-blue-700 py-2 text-white dark:text-white md:bg-transparent md:p-0 md:text-gray-900 underline dark:md:text-white",
+		"block rounded bg-blue-700 p-2 text-white dark:text-white md:bg-transparent md:p-0 underline dark:md:text-white",
 };
 
 export const Navbar = () => {
 	const [isOpen, setIsOpen] = useState(false);
+	const pathname = usePathname()
+
+	const isActive = (path: string) => {
+		return pathname === path
+	}
 
 	return (
 		<nav className="bg-gray-900 p-6">
@@ -25,7 +31,7 @@ export const Navbar = () => {
 					type="button"
 					className={`md:hidden inline-flex items-center rounded-lg p-2 text-sm text-gray-500  dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 ${isOpen ? "outline-none ring-2 ring-gray-200 bg-gray-400 md:hidden" : ""} `}
 					aria-controls="mobile-menu"
-					aria-expanded="false"
+					aria-expanded={isOpen}
 					onClick={() => setIsOpen(!isOpen)}
 				>
 					<span className="sr-only">Open main menu</span>
@@ -63,7 +69,7 @@ export const Navbar = () => {
 							<Link
 								data-testid="navbar-link--home"
 								href={"/"}
-								className={navbarStyles.default}
+								className={isActive("/") ? navbarStyles.active : navbarStyles.default}
 							>
 								Home
 							</Link>
@@ -72,7 +78,7 @@ export const Navbar = () => {
 							<Link
 								data-testid="navbar-link--recipes"
 								href={"/recipes"}
-								className={navbarStyles.default}
+								className={isActive("/recipes") ? navbarStyles.active : navbarStyles.default}
 							>
 								All recipes
 							</Link>
